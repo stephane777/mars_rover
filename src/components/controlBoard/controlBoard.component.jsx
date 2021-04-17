@@ -1,7 +1,7 @@
 import React from "react";
 import * as SCB from "./controlBoard.style";
 
-const ControlBoard = ({ roverOrder, animation, setOrders }) => {
+const ControlBoard = ({ roverOrder, animation, roverOrders }) => {
 	const [inputValue, setInputValue] = React.useState("");
 
 	const handleChange = (e) => {
@@ -18,7 +18,7 @@ const ControlBoard = ({ roverOrder, animation, setOrders }) => {
 		e.preventDefault();
 		// console.log(inputValue);
 		// roverOrder(inputValue, 0);
-		setOrders(inputValue);
+		roverOrders(inputValue);
 		return "";
 	};
 	return (

@@ -41,13 +41,13 @@ export const Rover = styled.img`
 			if (direction === "W" && move === "r") return "rotate(0)";
 		} else {
 			return direction === "N"
-				? "translate(0) rotate(0)"
+				? "rotate(0)"
 				: direction === "E"
-				? "translate(0) rotate(90deg)"
+				? "rotate(90deg)"
 				: direction === "S"
-				? "translate(0) rotate(180deg)"
+				? "rotate(180deg)"
 				: direction === "W"
-				? "translate(0) rotate(270deg)"
+				? "rotate(270deg)"
 				: "rotate(0)";
 		}
 	}};

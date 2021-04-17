@@ -11,7 +11,7 @@ const initialState = {
 	error: "",
 	animation: [],
 	orders: {
-		orders: "",
+		string: "",
 		step: 0,
 	},
 };
@@ -27,7 +27,12 @@ const reducer = (state, action) => {
 		S: "W",
 		W: "N",
 	};
-
+	const move_left = {
+		N: "W",
+		E: "N",
+		S: "E",
+		W: "S",
+	};
 	switch (action.type) {
 		case "MOVE_FORWARD":
 			return {
@@ -81,8 +86,16 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				orders: {
-					...state.orders,
-					orders: action.string,
+					string: action.orders.string,
+					step: action.orders.step,
+				},
+			};
+		case "RESET_ORDERS":
+			return {
+				...state,
+				orders: {
+					string: "",
+					step: 0,
 				},
 			};
 		default:
@@ -92,46 +105,53 @@ const reducer = (state, action) => {
 
 const App = () => {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
-	const { position, currentDirection, animation, error, orders } = state;
+	const {
+		position,
+		currentDirection,
+		animation,
+		error,
+		orders: { string },
+	} = state;
+	const { orders } = state;
+	let {
+		orders: { step },
+	} = state;
 
 	React.useEffect(() => {
-		console.log(`animation happened`);
-	}, [orders.orders]);
-
-	// ex: orders = 'FRFLRR'
-	const executeOrder = (orders, i) => {
-		// if (isNextMoveNotAllowed(position)) {
-		// 	handleRoverMovingAwayFromGrid();
-		// 	return;
-		// }
-
-		dispatch({
-			type: "START_ANIMATION",
-			direction: state.currentDirection,
-			move: orders[i],
-		});
-		setTimeout(() => {
-			const type =
-				orders[i] === "f"
-					? "MOVE_FORWARD"
-					: orders[i] === "r"
-					? "MOVE_RIGHT"
-					: orders[i] === "l"
-					? "MOVE_LEFT"
-					: null;
-			console.log(`type: ${type} currentDirection: ${currentDirection}`);
-			dispatch({ type });
+		console.log(`useEffect : string:${string} step:${step}`);
+		if (string && step < 9 && string.length > step) {
+			// console.log(`animation happened`);
+			// console.log(`string: ${string}`);
+			// console.log(`step: ${step}`);
+			console.log(`dispatch animation: string: ${string} step:${step}`);
+			dispatch({
+				type: "START_ANIMATION",
+				direction: state.currentDirection,
+				move: string[step],
+			});
 			setTimeout(() => {
-				if (orders.length > i + 1) {
-					executeOrder(orders, i + 1);
-				}
-			}, 10);
-		}, 700);
-	};
+				if (step < 9) {
+					const type =
+						string[step] === "f"
+							? "MOVE_FORWARD"
+							: string[step] === "r"
+							? "MOVE_RIGHT"
+							: string[step] === "l"
+							? "MOVE_LEFT"
+							: null;
 
-	const setOrders = (orders) => {
-		dispatch({ type: "SET_ORDERS", string: orders });
-	};
+					// console.log(`type: ${type} currentDirection: ${currentDirection}`);
+					dispatch({ type });
+					// console.log(`set_orders: step:${step} ++step: ${++step}`);
+					dispatch({ type: "SET_ORDERS", orders: { string, step: step + 1 } });
+					if (string.length === step - 1) {
+						dispatch({ type: "RESET_ORDERS" });
+					}
+				}
+			}, 1000);
+		}
+	}, [orders]);
+
 	// this function add an extra move forward after each Right and Left order
 	const addForwardAfterRandL = (orders) => {
 		// console.log(orders);
@@ -141,9 +161,13 @@ const App = () => {
 		return ordersArray.join("");
 	};
 
-	const roverOrder = (orders) => {
+	const roverOrders = (orders) => {
 		const newOrdersWithForwardAfterRandL = addForwardAfterRandL(orders);
-		executeOrder(newOrdersWithForwardAfterRandL, 0);
+		dispatch({
+			type: "SET_ORDERS",
+			orders: { string: newOrdersWithForwardAfterRandL, step: 0 },
+		});
+		// executeOrder(newOrdersWithForwardAfterRandL, 0);
 	};
 	const handleRoverMovingAwayFromGrid = () => {
 		dispatch({
@@ -159,11 +183,7 @@ const App = () => {
 			<Header />
 			<SA.AppWrapper>
 				<h1 style={{ marginTop: "3rem" }}>ROVER CONTROL BOARD</h1>
-				<ControlBoard
-					roverOrder={roverOrder}
-					animation={animation}
-					setOrders={setOrders}
-				/>
+				<ControlBoard animation={animation} roverOrders={roverOrders} />
 				{error && <SA.ErrorMessage>{error}</SA.ErrorMessage>}
 				<Grid
 					direction={currentDirection}
