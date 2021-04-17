@@ -10,6 +10,10 @@ const initialState = {
 	currentDirection: "N",
 	error: "",
 	animation: [],
+	orders: {
+		orders: "",
+		step: 0,
+	},
 };
 
 const reducer = (state, action) => {
@@ -73,6 +77,14 @@ const reducer = (state, action) => {
 				...state,
 				animation: [action.direction, action.move],
 			};
+		case "SET_ORDERS":
+			return {
+				...state,
+				orders: {
+					...state.orders,
+					orders: action.string,
+				},
+			};
 		default:
 			return state;
 	}
@@ -80,13 +92,11 @@ const reducer = (state, action) => {
 
 const App = () => {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
-	const { position, currentDirection, animation, error } = state;
+	const { position, currentDirection, animation, error, orders } = state;
 
 	React.useEffect(() => {
-		if (animation.length > 0) {
-			console.log(`animation happened`);
-		}
-	}, [animation]);
+		console.log(`animation happened`);
+	}, [orders.orders]);
 
 	// ex: orders = 'FRFLRR'
 	const executeOrder = (orders, i) => {
@@ -118,29 +128,10 @@ const App = () => {
 			}, 10);
 		}, 700);
 	};
-	// check if the next move is inside the Grid
-	const isNextMoveNotAllowed = (position) => {
-		let isRoverMovingAwayFromGrid = false;
-		switch (currentDirection) {
-			case "N":
-				// console.log("N", position);
-				if (position[1] + 1 > 9) isRoverMovingAwayFromGrid = true;
-				break;
-			case "S":
-				if (position[1] - 1 < 0) isRoverMovingAwayFromGrid = true;
-				break;
-			case "E":
-				if (position[0] + 1 > 9) isRoverMovingAwayFromGrid = true;
-				break;
-			case "W":
-				if (position[0] - 1 < 0) isRoverMovingAwayFromGrid = true;
-				break;
-			default:
-				isRoverMovingAwayFromGrid = false;
-		}
-		return isRoverMovingAwayFromGrid;
-	};
 
+	const setOrders = (orders) => {
+		dispatch({ type: "SET_ORDERS", string: orders });
+	};
 	// this function add an extra move forward after each Right and Left order
 	const addForwardAfterRandL = (orders) => {
 		// console.log(orders);
@@ -168,7 +159,11 @@ const App = () => {
 			<Header />
 			<SA.AppWrapper>
 				<h1 style={{ marginTop: "3rem" }}>ROVER CONTROL BOARD</h1>
-				<ControlBoard roverOrder={roverOrder} animation={animation} />
+				<ControlBoard
+					roverOrder={roverOrder}
+					animation={animation}
+					setOrders={setOrders}
+				/>
 				{error && <SA.ErrorMessage>{error}</SA.ErrorMessage>}
 				<Grid
 					direction={currentDirection}
