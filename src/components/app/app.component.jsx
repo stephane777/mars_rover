@@ -7,6 +7,7 @@ import { ControlBoard } from "../controlBoard/controlBoard.component";
 
 const initialState = {
 	position: [0, 0],
+	roverOrientation: 0,
 	currentDirection: "N",
 	error: "",
 	animation: [],
@@ -17,10 +18,6 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
-	// const { position, currentDirection, error } = state;
-	console.log("Reducer action: ");
-	console.log(action);
-
 	const move_right = {
 		N: "E",
 		E: "S",
@@ -33,6 +30,7 @@ const reducer = (state, action) => {
 		S: "E",
 		W: "S",
 	};
+
 	switch (action.type) {
 		case "MOVE_FORWARD":
 			return {
@@ -61,16 +59,23 @@ const reducer = (state, action) => {
 				...state,
 				animation: [],
 				currentDirection: move_right[state.currentDirection],
+				roverOrientation: state.roverOrientation + 90,
 			};
 		case "MOVE_LEFT":
 			return {
 				...state,
-				currentDirection: "",
+				animation: [],
+				currentDirection: move_left[state.currentDirection],
+				roverOrientation: state.roverOrientation - 90,
 			};
 		case "SET_ERROR":
 			return {
 				...state,
 				error: action.message,
+				orders: {
+					string: "",
+					step: 0,
+				},
 			};
 		case "RESET_ERROR":
 			return {
@@ -107,6 +112,7 @@ const App = () => {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
 	const {
 		position,
+		roverOrientation,
 		currentDirection,
 		animation,
 		error,
@@ -118,43 +124,44 @@ const App = () => {
 	} = state;
 
 	React.useEffect(() => {
-		console.log(`useEffect : string:${string} step:${step}`);
-		if (string && step < 9 && string.length > step) {
-			// console.log(`animation happened`);
-			// console.log(`string: ${string}`);
-			// console.log(`step: ${step}`);
-			console.log(`dispatch animation: string: ${string} step:${step}`);
+		if (string && string.length > step) {
+			if (isNextMoveNotAllowed()) {
+				handleRoverMovingAwayFromGrid();
+				return;
+			}
 			dispatch({
 				type: "START_ANIMATION",
 				direction: state.currentDirection,
 				move: string[step],
 			});
 			setTimeout(() => {
-				if (step < 9) {
-					const type =
-						string[step] === "f"
-							? "MOVE_FORWARD"
-							: string[step] === "r"
-							? "MOVE_RIGHT"
-							: string[step] === "l"
-							? "MOVE_LEFT"
-							: null;
+				const type =
+					string[step] === "f"
+						? "MOVE_FORWARD"
+						: string[step] === "r"
+						? "MOVE_RIGHT"
+						: string[step] === "l"
+						? "MOVE_LEFT"
+						: null;
 
-					// console.log(`type: ${type} currentDirection: ${currentDirection}`);
-					dispatch({ type });
-					// console.log(`set_orders: step:${step} ++step: ${++step}`);
-					dispatch({ type: "SET_ORDERS", orders: { string, step: step + 1 } });
-					if (string.length === step - 1) {
+				dispatch({ type });
+
+				setTimeout(() => {
+					if (step < string.length - 1)
+						dispatch({
+							type: "SET_ORDERS",
+							orders: { string, step: step + 1 },
+						});
+					if (string.length === step + 1) {
 						dispatch({ type: "RESET_ORDERS" });
 					}
-				}
-			}, 1000);
+				}, 400);
+			}, 600);
 		}
 	}, [orders]);
 
 	// this function add an extra move forward after each Right and Left order
 	const addForwardAfterRandL = (orders) => {
-		// console.log(orders);
 		const ordersArray = orders
 			.split("")
 			.map((order) => (["l", "r"].includes(order) ? `${order}f` : order));
@@ -163,11 +170,11 @@ const App = () => {
 
 	const roverOrders = (orders) => {
 		const newOrdersWithForwardAfterRandL = addForwardAfterRandL(orders);
+
 		dispatch({
 			type: "SET_ORDERS",
 			orders: { string: newOrdersWithForwardAfterRandL, step: 0 },
 		});
-		// executeOrder(newOrdersWithForwardAfterRandL, 0);
 	};
 	const handleRoverMovingAwayFromGrid = () => {
 		dispatch({
@@ -178,17 +185,51 @@ const App = () => {
 			dispatch({ type: "RESET_ERROR" });
 		}, 1500);
 	};
+
+	// check if the next move is inside the Grid
+	const isNextMoveNotAllowed = () => {
+		let isRoverMovingAwayFromGrid = false;
+		const directionAndMove = `${currentDirection}${string[step].toUpperCase()}`;
+		console.log(
+			`position: ${position} currentDirection: ${currentDirection} move:${string[step]} moveDirection: ${directionAndMove}`
+		);
+
+		// We only care about the move forward, R or L won't change position only orientation
+		switch (directionAndMove) {
+			case "NF":
+				if (position[1] + 1 > 9) isRoverMovingAwayFromGrid = true;
+				break;
+			case "SF":
+				if (position[1] - 1 < 0) isRoverMovingAwayFromGrid = true;
+				break;
+			case "EF":
+				if (position[0] + 1 > 9) isRoverMovingAwayFromGrid = true;
+				break;
+			case "WF":
+				if (position[0] - 1 < 0) isRoverMovingAwayFromGrid = true;
+				break;
+			default:
+				isRoverMovingAwayFromGrid = false;
+		}
+		return isRoverMovingAwayFromGrid;
+	};
+
 	return (
 		<div className="App">
 			<Header />
 			<SA.AppWrapper>
 				<h1 style={{ marginTop: "3rem" }}>ROVER CONTROL BOARD</h1>
-				<ControlBoard animation={animation} roverOrders={roverOrders} />
+				<ControlBoard
+					direction={currentDirection}
+					animation={animation}
+					roverOrders={roverOrders}
+				/>
 				{error && <SA.ErrorMessage>{error}</SA.ErrorMessage>}
 				<Grid
 					direction={currentDirection}
 					position={position}
 					animation={animation}
+					roverOrientation={roverOrientation}
 				/>
 			</SA.AppWrapper>
 			<Footer />

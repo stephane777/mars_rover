@@ -2,10 +2,12 @@ import React from "react";
 import * as SG from "./grid.style";
 import rover from "../../assets/imgs/rover.png";
 
-const Grid = ({ position, animation, direction }) => {
+const Grid = ({ position, animation, direction, roverOrientation }) => {
 	const grid = [...Array(100).keys()];
 	// console.log(`animation from Grid`);
 	// console.log(animation);
+	// console.log(`props.direction from Grid: ${direction}`);
+	console.log(`roverOrientation from Grid : ${roverOrientation}`);
 	return (
 		<SG.GridWrapper className="grid">
 			{grid.map((cell, i) => {
@@ -21,6 +23,7 @@ const Grid = ({ position, animation, direction }) => {
 								alt="rover"
 								animation={animation}
 								direction={direction}
+								roverOrientation={roverOrientation}
 							></SG.Rover>
 						)}
 					</SG.Cell>

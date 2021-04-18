@@ -6,7 +6,6 @@ export const Wrapper = styled.div`
 
 export const Form = styled.form`
 	display: flex;
-	flex-direction: column;
 `;
 
 export const Input = styled.input`
@@ -15,4 +14,8 @@ export const Input = styled.input`
 export const Label = styled.label`
 	font-size: 1.6rem;
 	text-align: center;
+`;
+
+export const Direction = styled.p`
+	font-size: 1.6rem;
 `;

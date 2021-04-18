@@ -1,7 +1,7 @@
 import React from "react";
 import * as SCB from "./controlBoard.style";
 
-const ControlBoard = ({ roverOrder, animation, roverOrders }) => {
+const ControlBoard = ({ animation, roverOrders, direction }) => {
 	const [inputValue, setInputValue] = React.useState("");
 
 	const handleChange = (e) => {
@@ -25,7 +25,7 @@ const ControlBoard = ({ roverOrder, animation, roverOrders }) => {
 		<SCB.Wrapper className="controlBoard">
 			<SCB.Form onSubmit={handleSubmit}>
 				<SCB.Label htmlFor="inputControl" className="search__label">
-					Contol Rover
+					Send order to rover
 				</SCB.Label>
 				<SCB.Input
 					type="text"
@@ -34,10 +34,11 @@ const ControlBoard = ({ roverOrder, animation, roverOrders }) => {
 					value={inputValue}
 					disabled={animation.length > 0}
 				/>
-				<button disabled={animation.length > 0 || !inputValue} type="submit">
-					Send order to rover
+				<button disabled={!inputValue} type="submit">
+					Go!
 				</button>
 			</SCB.Form>
+			<SCB.Direction>Rover Direction: {direction}</SCB.Direction>
 		</SCB.Wrapper>
 	);
 };

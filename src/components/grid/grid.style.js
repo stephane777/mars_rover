@@ -19,36 +19,24 @@ export const Cell = styled.div`
 export const Rover = styled.img`
 	width: 2rem;
 	height: 2rem;
-	transition: 0.6s;
+	transition: 0.4s;
 	transform: ${(props) => {
-		const { direction } = props.direction;
-		// console.log(`direction: ${direction}`);
+		const { roverOrientation } = props;
+		const roverRotation = `${roverOrientation}deg`;
+
 		if (props.animation.length > 0) {
 			const [direction, move] = props.animation;
 
-			// console.log(`direction: ${direction} move: ${move}`);
-			// direction: N move: r
-			// direction: N move: f
+			if (move === "f") return `rotate(${roverRotation}) translateY(-4rem)`;
 
-			if (direction === "N" && move === "f") return `translateY(-4rem)`;
-			if (direction === "E" && move === "f") return "tanslateX(4rem)";
-			if (direction === "S" && move === "f") return "translateY(4rem)";
-			if (direction === "W" && move === "f") return "translateX(-4rem)";
-
-			if (direction === "N" && move === "r") return "rotate(90deg)";
-			if (direction === "E" && move === "r") return "rotate(180deg)";
-			if (direction === "S" && move === "r") return "rotate(270deg)";
-			if (direction === "W" && move === "r") return "rotate(0)";
+			if (["r", "l"].includes(move)) {
+				return move === "r"
+					? `rotate(${roverOrientation + 90}deg)`
+					: `rotate(${roverOrientation - 90}deg)`;
+			}
 		} else {
-			return direction === "N"
-				? "rotate(0)"
-				: direction === "E"
-				? "rotate(90deg)"
-				: direction === "S"
-				? "rotate(180deg)"
-				: direction === "W"
-				? "rotate(270deg)"
-				: "rotate(0)";
+			return `rotate(${roverRotation})`;
 		}
 	}};
 `;
+// switch (`${direction}${move.toUppercase()}) {
