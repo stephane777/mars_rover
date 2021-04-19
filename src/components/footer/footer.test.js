@@ -1,7 +1,6 @@
 import React from "react";
 import "@testing-library/jest-dom";
-import axios from "axios";
-import { render, screen, act, cleanup } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import { Footer } from "./footer.component";
 
 afterEach(cleanup);

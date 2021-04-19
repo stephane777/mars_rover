@@ -4,116 +4,14 @@ import { Footer } from "../footer";
 import { Grid } from "../grid";
 import * as SA from "./app.style";
 import { ControlBoard } from "../controlBoard/controlBoard.component";
-
-const initialState = {
-	position: [0, 0],
-	roverOrientation: 0,
-	currentDirection: "N",
-	error: "",
-	animation: [],
-	orders: {
-		string: "",
-		step: 0,
-	},
-};
-
-const reducer = (state, action) => {
-	const move_right = {
-		N: "E",
-		E: "S",
-		S: "W",
-		W: "N",
-	};
-	const move_left = {
-		N: "W",
-		E: "N",
-		S: "E",
-		W: "S",
-	};
-
-	switch (action.type) {
-		case "MOVE_FORWARD":
-			return {
-				...state,
-				animation: [],
-				position: state.position.map((pos, i) => {
-					// Grid x direction
-					if (!i) {
-						return state.currentDirection === "E"
-							? pos + 1
-							: state.currentDirection === "W"
-							? pos - 1
-							: pos;
-						// Grid y direction
-					} else {
-						return state.currentDirection === "N"
-							? pos + 1
-							: state.currentDirection === "S"
-							? pos - 1
-							: pos;
-					}
-				}),
-			};
-		case "MOVE_RIGHT":
-			return {
-				...state,
-				animation: [],
-				currentDirection: move_right[state.currentDirection],
-				roverOrientation: state.roverOrientation + 90,
-			};
-		case "MOVE_LEFT":
-			return {
-				...state,
-				animation: [],
-				currentDirection: move_left[state.currentDirection],
-				roverOrientation: state.roverOrientation - 90,
-			};
-		case "SET_ERROR":
-			return {
-				...state,
-				error: action.message,
-				orders: {
-					string: "",
-					step: 0,
-				},
-			};
-		case "RESET_ERROR":
-			return {
-				...state,
-				error: "",
-			};
-		case "START_ANIMATION":
-			return {
-				...state,
-				animation: [action.direction, action.move],
-			};
-		case "SET_ORDERS":
-			return {
-				...state,
-				orders: {
-					string: action.orders.string,
-					step: action.orders.step,
-				},
-			};
-		case "RESET_ORDERS":
-			return {
-				...state,
-				orders: {
-					string: "",
-					step: 0,
-				},
-			};
-		default:
-			return state;
-	}
-};
+import { initialState, reducer } from "../../reducer";
 
 const App = () => {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
 	const {
 		position,
-		roverOrientation,
 		currentDirection,
+		roverOrientation,
 		animation,
 		error,
 		orders: { string },
@@ -129,6 +27,7 @@ const App = () => {
 				handleRoverMovingAwayFromGrid();
 				return;
 			}
+
 			dispatch({
 				type: "START_ANIMATION",
 				direction: state.currentDirection,
@@ -167,7 +66,9 @@ const App = () => {
 			.map((order) => (["l", "r"].includes(order) ? `${order}f` : order));
 		return ordersArray.join("");
 	};
-
+	const handleResetPosition = () => {
+		dispatch({ type: "RESET_POSITION" });
+	};
 	const roverOrders = (orders) => {
 		const newOrdersWithForwardAfterRandL = addForwardAfterRandL(orders);
 
@@ -176,6 +77,7 @@ const App = () => {
 			orders: { string: newOrdersWithForwardAfterRandL, step: 0 },
 		});
 	};
+
 	const handleRoverMovingAwayFromGrid = () => {
 		dispatch({
 			type: "SET_ERROR",
@@ -190,9 +92,6 @@ const App = () => {
 	const isNextMoveNotAllowed = () => {
 		let isRoverMovingAwayFromGrid = false;
 		const directionAndMove = `${currentDirection}${string[step].toUpperCase()}`;
-		console.log(
-			`position: ${position} currentDirection: ${currentDirection} move:${string[step]} moveDirection: ${directionAndMove}`
-		);
 
 		// We only care about the move forward, R or L won't change position only orientation
 		switch (directionAndMove) {
@@ -218,11 +117,15 @@ const App = () => {
 		<div className="App">
 			<Header />
 			<SA.AppWrapper>
-				<h1 style={{ marginTop: "3rem" }}>ROVER CONTROL BOARD</h1>
+				<SA.Heading style={{ marginTop: "3rem" }}>
+					ROVER CONTROL BOARD
+				</SA.Heading>
 				<ControlBoard
 					direction={currentDirection}
 					animation={animation}
 					roverOrders={roverOrders}
+					position={position}
+					resetPosition={handleResetPosition}
 				/>
 				{error && <SA.ErrorMessage>{error}</SA.ErrorMessage>}
 				<Grid

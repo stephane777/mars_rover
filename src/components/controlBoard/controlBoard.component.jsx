@@ -1,7 +1,14 @@
 import React from "react";
 import * as SCB from "./controlBoard.style";
+import PropTypes from "prop-types";
 
-const ControlBoard = ({ animation, roverOrders, direction }) => {
+const ControlBoard = ({
+	animation,
+	roverOrders,
+	direction,
+	position,
+	resetPosition,
+}) => {
 	const [inputValue, setInputValue] = React.useState("");
 
 	const handleChange = (e) => {
@@ -16,31 +23,63 @@ const ControlBoard = ({ animation, roverOrders, direction }) => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// console.log(inputValue);
-		// roverOrder(inputValue, 0);
+
 		roverOrders(inputValue);
-		return "";
+		setInputValue("");
 	};
 	return (
 		<SCB.Wrapper className="controlBoard">
 			<SCB.Form onSubmit={handleSubmit}>
-				<SCB.Label htmlFor="inputControl" className="search__label">
-					Send order to rover
-				</SCB.Label>
-				<SCB.Input
-					type="text"
-					id="inputControl"
-					onChange={handleChange}
-					value={inputValue}
-					disabled={animation.length > 0}
-				/>
-				<button disabled={!inputValue} type="submit">
-					Go!
-				</button>
+				<SCB.Row>
+					<SCB.ColumnLabel>
+						<SCB.Label htmlFor="inputControl" className="search__label">
+							Send order to rover:
+						</SCB.Label>
+					</SCB.ColumnLabel>
+					<SCB.ColumnData
+						style={{ display: "flex", justifyContent: "space-between" }}
+					>
+						<SCB.Input
+							type="text"
+							id="inputControl"
+							onChange={handleChange}
+							value={inputValue}
+							disabled={animation.length > 0 && !inputValue}
+						/>
+						<SCB.Button disabled={!inputValue} type="submit">
+							Go!
+						</SCB.Button>
+					</SCB.ColumnData>
+				</SCB.Row>
+				<SCB.Row>
+					<SCB.ColumnLabel>
+						<SCB.Label>Rover direction:</SCB.Label>
+					</SCB.ColumnLabel>
+					<SCB.ColumnData>
+						<SCB.Direction> {direction}</SCB.Direction>
+					</SCB.ColumnData>
+				</SCB.Row>
 			</SCB.Form>
-			<SCB.Direction>Rover Direction: {direction}</SCB.Direction>
+			<SCB.Row>
+				<SCB.ColumnLabel>
+					<SCB.Label> Rover position:</SCB.Label>
+				</SCB.ColumnLabel>
+				<SCB.ColumnData
+					style={{ display: "flex", justifyContent: "space-between" }}
+				>
+					<SCB.Label>{`X:${position[0]} Y:${position[1]}`}</SCB.Label>
+					<SCB.Button onClick={resetPosition}>Reset</SCB.Button>
+				</SCB.ColumnData>
+			</SCB.Row>
 		</SCB.Wrapper>
 	);
 };
 
+ControlBoard.prototype = {
+	animation: PropTypes.array.isRequired,
+	direction: PropTypes.string.isRequired,
+	position: PropTypes.arrayOf(PropTypes.number).isRequired,
+	resetPosition: PropTypes.func.isRequired,
+	roverOrders: PropTypes.func.isRequired,
+};
 export { ControlBoard };

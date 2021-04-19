@@ -22,6 +22,7 @@ body {
 
 :root {
 	--color-primary: #1a3150;
+	--color-mars: #d02123;
 	--color-secondary: #96bd42;
 	--color-tertiary: #008891;
 	--alert: #721c24;
@@ -40,4 +41,9 @@ body {
 	--color-grey-dark-4: #bbb;
 
 	--color-white: #fff;
+
+	--breakpoint-sm: 576px;
+	--breakpoint-md: 768px;
+	--breakpoint-lg: 992px;
+	--breakpoint-xl: 1200px;
 }
