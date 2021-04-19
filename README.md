@@ -25,6 +25,12 @@ Jest and React-testing-library for the testing part.
 
 ### Available Scripts
 
+Before you can run any scripts below install the project with the command below :
+
+```
+git clone https://github.com/stephane777/mars_rover.git
+```
+
 Once you have cloned the repo you must run the command below to install all the dependencies.
 
 ```
