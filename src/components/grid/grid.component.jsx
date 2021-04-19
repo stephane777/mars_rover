@@ -22,8 +22,6 @@ const Grid = ({ position, animation, direction, roverOrientation }) => {
 								animation={animation}
 								direction={direction}
 								roverOrientation={roverOrientation}
-								// data-testid={`rover_${switchIndex}`}
-								data
 							></SG.Rover>
 						)}
 					</SG.Cell>
