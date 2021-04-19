@@ -4,16 +4,19 @@
 
 The goal for this project was to
 
-1. move a rover inside a grid (10\*10) with the move forward (f) left (l) and (right)
+1. move a rover inside a grid (10\*10) with the move forward (f) left (l) and (right) command
 2. Right and left are actually 2 orders: one rotation that change the direction and followed by a move forward.
+3. An input field is available for the user to send the orders to rover.
+4. In the control board Rover direction indicate North,Est,South or West.
+5. Possibility to reset the current position with the reset button.
 
 ### Overview
 
-![mars rover](./src/assets/imgs/mars_rover.png);
+![mars rover](./src/assets/imgs/mars_rover.png)
 
 ### Demo
 
-![mars rover demo](https://share.getcloudapp.com/v1ub0y0w)
+[mars rover demo](https://share.getcloudapp.com/v1ub0y0w)
 
 ### Tools
 
