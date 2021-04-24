@@ -10,7 +10,7 @@ const Grid = ({ position, animation, direction, roverOrientation }) => {
 		<SG.GridWrapper className="grid">
 			{grid.map((cell, i) => {
 				// const index = `${99 - i}`.length === 1 ? `0${99 - i}` : `${99 - i}`;
-				const index = `${20 - i}`.length === 1 ? `0${20 - i}` : `${99 - i}`;
+				const index = `${99 - i}`.length === 1 ? `0${99 - i}` : `${99 - i}`;
 				const switchIndex = `${index[1]}${index[0]}`;
 				const matchIndex = `${position[1]}${position[0]}`;
 				const isPositionMatchIndex = matchIndex === index;
