@@ -4,7 +4,7 @@ import rover from "../../assets/imgs/rover.png";
 import PropTypes from "prop-types";
 
 const Grid = ({ position, animation, direction, roverOrientation }) => {
-	const grid = [...Array(20).keys()];
+	const grid = [...Array(100).keys()];
 
 	return (
 		<SG.GridWrapper className="grid">
