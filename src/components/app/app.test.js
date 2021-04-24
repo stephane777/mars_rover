@@ -73,30 +73,30 @@ describe("it should render the component", () => {
 		expect(img).toBeInTheDocument();
 	});
 
-	// it("should move the rover to the right", async () => {
-	// 	render(<App />);
-	// 	// const cellInitialPosition = document.getElementById("10");
+	it("should move the rover to the right", async () => {
+		render(<App />);
+		// const cellInitialPosition = document.getElementById("10");
 
-	// 	const goButton = screen.getByRole("button", { name: /Go!/i });
-	// 	const input = screen.getByRole("textbox", {
-	// 		name: /send order to rover:/i,
-	// 	});
-	// 	expect(screen.getByTestId(/rover_09/)).toBeInTheDocument();
-	// 	act(() => {
-	// 		fireEvent.change(input, {
-	// 			target: { value: "r" },
-	// 		});
-	// 		fireEvent.click(goButton);
-	// 	});
-	// 	await waitFor(() => {
-	// 		expect(screen.getByTestId("rover_19")).toBeInTheDocument();
-	// 	});
-	// 	// await waitForElementToBeRemoved(() => screen.getByTestId(/rover_09/i));
-	// 	screen.debug();
+		const goButton = screen.getByRole("button", { name: /Go!/i });
+		const input = screen.getByRole("textbox", {
+			name: /send order to rover:/i,
+		});
+		expect(screen.getByTestId(/rover_00/i)).toBeInTheDocument();
+		act(() => {
+			fireEvent.change(input, {
+				target: { value: "r" },
+			});
+			fireEvent.click(goButton);
+		});
+		// await waitFor(() => {
+		// 	expect(screen.findByTestId("rover_10")).toBeInTheDocument();
+		// });
+		await waitForElementToBeRemoved(() => screen.getByTestId(/rover_00/i));
+		screen.debug();
 
-	// 	// const rover = await screen.findByTestId(`rover_09`);
-	// 	// expect(rover).toBeInTheDocument();
-	// });
+		// const rover = await screen.findByTestId(`rover_09`);
+		// expect(rover).toBeInTheDocument();
+	});
 
 	describe("it should match the snapshot", () => {
 		it("should match snapshot", () => {
