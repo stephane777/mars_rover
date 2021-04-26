@@ -5,13 +5,12 @@ import { Grid } from "../grid";
 import * as SA from "./app.style";
 import { ControlBoard } from "../controlBoard/controlBoard.component";
 import { initialState, reducer } from "../../reducer";
+import { getDegree } from "../../utils";
 
 const App = () => {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
 	const {
 		position,
-		currentDirection,
-		roverOrientation,
 		animation,
 		error,
 		orders: { string },
@@ -30,7 +29,6 @@ const App = () => {
 
 			dispatch({
 				type: "START_ANIMATION",
-				direction: state.currentDirection,
 				move: string[step],
 			});
 			setTimeout(() => {
@@ -46,11 +44,12 @@ const App = () => {
 				dispatch({ type });
 
 				setTimeout(() => {
-					if (step < string.length - 1)
+					if (step < string.length - 1) {
 						dispatch({
 							type: "SET_ORDERS",
 							orders: { string, step: step + 1 },
 						});
+					}
 					if (string.length === step + 1) {
 						dispatch({ type: "RESET_ORDERS" });
 					}
@@ -91,20 +90,24 @@ const App = () => {
 	// check if the next move is inside the Grid
 	const isNextMoveNotAllowed = () => {
 		let isRoverMovingAwayFromGrid = false;
-		const directionAndMove = `${currentDirection}${string[step].toUpperCase()}`;
-
+		console.log(`animation: ${orders.string[orders.step]}`);
+		const currentMove = orders.string[orders.step];
+		if (currentMove !== "f") return;
+		const degree = getDegree(position[2]);
+		// const cardinal = getCardinal(degree);
 		// We only care about the move forward, R or L won't change position only orientation
-		switch (directionAndMove) {
-			case "NF":
+		// const directionAndMove = `${cardinal}${string[step].toUpperCase()}`;
+		switch (degree) {
+			case 0:
 				if (position[1] + 1 > 9) isRoverMovingAwayFromGrid = true;
 				break;
-			case "SF":
+			case 180:
 				if (position[1] - 1 < 0) isRoverMovingAwayFromGrid = true;
 				break;
-			case "EF":
+			case 90:
 				if (position[0] + 1 > 9) isRoverMovingAwayFromGrid = true;
 				break;
-			case "WF":
+			case 270:
 				if (position[0] - 1 < 0) isRoverMovingAwayFromGrid = true;
 				break;
 			default:
@@ -121,19 +124,13 @@ const App = () => {
 					ROVER CONTROL BOARD
 				</SA.Heading>
 				<ControlBoard
-					direction={currentDirection}
 					animation={animation}
 					roverOrders={roverOrders}
 					position={position}
 					resetPosition={handleResetPosition}
 				/>
 				{error && <SA.ErrorMessage>{error}</SA.ErrorMessage>}
-				<Grid
-					direction={currentDirection}
-					position={position}
-					animation={animation}
-					roverOrientation={roverOrientation}
-				/>
+				<Grid position={position} animation={animation} />
 			</SA.AppWrapper>
 			<Footer />
 		</div>

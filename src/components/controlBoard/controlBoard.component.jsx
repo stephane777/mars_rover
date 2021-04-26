@@ -1,14 +1,9 @@
 import React from "react";
 import * as SCB from "./controlBoard.style";
 import PropTypes from "prop-types";
+import { getDegree, getCardinal } from "../../utils";
 
-const ControlBoard = ({
-	animation,
-	roverOrders,
-	direction,
-	position,
-	resetPosition,
-}) => {
+const ControlBoard = ({ animation, roverOrders, position, resetPosition }) => {
 	const [inputValue, setInputValue] = React.useState("");
 
 	const handleChange = (e) => {
@@ -56,7 +51,7 @@ const ControlBoard = ({
 						<SCB.Label>Rover direction:</SCB.Label>
 					</SCB.ColumnLabel>
 					<SCB.ColumnData>
-						<SCB.Direction> {direction}</SCB.Direction>
+						<SCB.Direction>{getCardinal(getDegree(position[2]))}</SCB.Direction>
 					</SCB.ColumnData>
 				</SCB.Row>
 			</SCB.Form>

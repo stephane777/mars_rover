@@ -1,64 +1,47 @@
 export const initialState = {
-	position: [0, 0],
-	currentDirection: "N",
+	position: [0, 0, 0],
 	error: "",
-	animation: [],
-	roverOrientation: 0,
+	animation: "",
 	orders: {
 		string: "",
 		step: 0,
 	},
 };
 export const reducer = (state, action) => {
-	const move_right = {
-		N: "E",
-		E: "S",
-		S: "W",
-		W: "N",
-	};
-	const move_left = {
-		N: "W",
-		E: "N",
-		S: "E",
-		W: "S",
+	const getDegree = (degree) => {
+		const deg = degree % 360;
+		return deg >= 0 ? deg : deg + 360;
 	};
 
 	switch (action.type) {
 		case "MOVE_FORWARD":
 			return {
 				...state,
-				animation: [],
+				animation: "",
 				position: state.position.map((pos, i) => {
 					// Grid x direction
+					const degree = getDegree(state.position[2]);
 					if (!i) {
-						return state.currentDirection === "E"
-							? pos + 1
-							: state.currentDirection === "W"
-							? pos - 1
-							: pos;
+						return degree === 90 ? pos + 1 : degree === 270 ? pos - 1 : pos;
 						// Grid y direction
+					} else if (i === 1) {
+						return degree === 0 ? pos + 1 : degree === 180 ? pos - 1 : pos;
 					} else {
-						return state.currentDirection === "N"
-							? pos + 1
-							: state.currentDirection === "S"
-							? pos - 1
-							: pos;
+						return pos;
 					}
 				}),
 			};
 		case "MOVE_RIGHT":
 			return {
 				...state,
-				animation: [],
-				currentDirection: move_right[state.currentDirection],
-				roverOrientation: state.roverOrientation + 90,
+				animation: "",
+				position: [...state.position.slice(0, 2), state.position[2] + 90],
 			};
 		case "MOVE_LEFT":
 			return {
 				...state,
-				animation: [],
-				currentDirection: move_left[state.currentDirection],
-				roverOrientation: state.roverOrientation - 90,
+				animation: "",
+				position: [...state.position.slice(0, 2), state.position[2] - 90],
 			};
 		case "SET_ERROR":
 			return {
@@ -77,7 +60,7 @@ export const reducer = (state, action) => {
 		case "START_ANIMATION":
 			return {
 				...state,
-				animation: [action.direction, action.move],
+				animation: action.move,
 			};
 		case "SET_ORDERS":
 			return {
@@ -98,7 +81,7 @@ export const reducer = (state, action) => {
 		case "RESET_POSITION":
 			return {
 				...state,
-				position: [0, 0],
+				position: [0, 0, 0],
 			};
 		default:
 			return state;

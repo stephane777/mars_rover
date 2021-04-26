@@ -2,6 +2,8 @@ import styled from "styled-components";
 import marsImg from "../../assets/imgs/mars.jpg";
 
 export const GridWrapper = styled.div`
+	position: relative;
+	box-sizing: content-box;
 	background-image: url(${marsImg});
 	display: flex;
 	flex-direction: row-reverse;
@@ -14,35 +16,47 @@ export const GridWrapper = styled.div`
 		width: 35rem;
 	}
 `;
-
-export const Cell = styled.div`
-	border: 1px dotted #ccc;
-	width: 10%;
-	height: 10%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+export const Grid = styled.div`
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 40rem;
+	height: 40rem;
+	background-size: 4rem 4rem;
+	background-image: linear-gradient(to right, #7d7d7d 1px, transparent 1px),
+		linear-gradient(to bottom, #7d7d7d 1px, transparent 1px);
 `;
+
 export const Rover = styled.img`
+	position: absolute;
+	top: ${(props) => {
+		const { position } = props;
+		return `${37 - position[1] * 4}rem`;
+	}};
+	left: ${(props) => {
+		const { position } = props;
+		return `${1 + position[0] * 4}rem`;
+	}};
 	width: 2rem;
 	height: 2rem;
-	fill: orange;
 	transition: 0.4s;
 	transform: ${(props) => {
-		const { roverOrientation } = props;
-		const roverRotation = `${roverOrientation}deg`;
-		if (props.animation.length > 0) {
-			const [direction, move] = props.animation;
+		const degree = props.position[2];
+		// console.log(`degree from Rover: ${degree}`);
 
-			if (move === "f") return `rotate(${roverRotation}) translateY(-4rem)`;
+		if (props.animation.length > 0) {
+			// console.log(`props.animation.length: ${props.animation.length}`);
+			const move = props.animation;
+
+			if (move === "f") return `rotate(${degree}deg) translateY(-4rem)`;
 
 			if (["r", "l"].includes(move)) {
 				return move === "r"
-					? `rotate(${roverOrientation + 90}deg)`
-					: `rotate(${roverOrientation - 90}deg)`;
+					? `rotate(${degree + 90}deg)`
+					: `rotate(${degree - 90}deg)`;
 			}
 		} else {
-			return `rotate(${roverRotation})`;
+			return `rotate(${degree}deg)`;
 		}
 	}};
 `;
