@@ -25,6 +25,11 @@ export const Grid = styled.div`
 	background-size: 4rem 4rem;
 	background-image: linear-gradient(to right, #7d7d7d 1px, transparent 1px),
 		linear-gradient(to bottom, #7d7d7d 1px, transparent 1px);
+	@media only screen and (max-width: 576px) {
+		height: 35rem;
+		width: 35rem;
+		background-size: 3.5rem 3.5rem;
+	}
 `;
 
 export const Rover = styled.img`
@@ -59,4 +64,14 @@ export const Rover = styled.img`
 			return `rotate(${degree}deg)`;
 		}
 	}};
+	@media only screen and (max-width: 576px) {
+		top: ${(props) => {
+			const { position } = props;
+			return `${32 - position[1] * 3.5}rem`;
+		}};
+		left: ${(props) => {
+			const { position } = props;
+			return `${1 + position[0] * 3.5}rem`;
+		}};
+	}
 `;
