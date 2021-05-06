@@ -19,6 +19,6 @@ const Grid = ({ position, animation }) => {
 };
 Grid.prototype = {
 	position: PropTypes.arrayOf(PropTypes.number).isRequired,
-	animation: PropTypes.array.isRequired,
+	animation: PropTypes.string.isRequired,
 };
 export { Grid };
